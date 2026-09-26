@@ -301,10 +301,6 @@ class PortfolioApp {
 
         if (socialLinksContainer) {
             socialLinksContainer.innerHTML = `
-                <a href="${data.socials.github}" target="_blank" rel="noopener noreferrer" class="social-box-btn" title="GitHub Profile">
-                    <i class="fab fa-github"></i>
-                    <span>GitHub</span>
-                </a>
                 <a href="${data.socials.devfolio}" target="_blank" rel="noopener noreferrer" class="social-box-btn devfolio" title="Devfolio Profile">
                     <i class="fas fa-terminal"></i>
                     <span>Devfolio</span>
@@ -312,10 +308,6 @@ class PortfolioApp {
                 <a href="${data.socials.linkedin}" target="_blank" rel="noopener noreferrer" class="social-box-btn linkedin" title="LinkedIn Profile">
                     <i class="fab fa-linkedin-in"></i>
                     <span>LinkedIn</span>
-                </a>
-                <a href="${data.socials.twitter || '#'}" target="_blank" rel="noopener noreferrer" class="social-box-btn twitter" title="Twitter / X">
-                    <i class="fab fa-x-twitter"></i>
-                    <span>Twitter/X</span>
                 </a>
             `;
         }
@@ -436,63 +428,205 @@ class PortfolioApp {
                 <div class="resume-sheet">
                     <header class="resume-header">
                         <div>
-                            <h2 class="res-name">${data.profile.name}</h2>
-                            <p class="res-title">${data.profile.tagline}</p>
+                            <h2 class="res-name">VISHNU S</h2>
+                            <p class="res-title">SOFTWARE ENGINEER</p>
                             <div class="res-meta-line">
-                                <span><i class="fas fa-map-marker-alt"></i> ${data.profile.location}</span>
-                                <span><i class="fas fa-envelope"></i> ${data.socials.email}</span>
-                                <span><i class="fab fa-github"></i> github.com/vishnu-dev</span>
+                                <span><i class="fas fa-map-marker-alt"></i> Salem, India</span>
+                                <span><i class="fas fa-phone-alt"></i> 8300518975</span>
+                                <span><i class="fas fa-envelope"></i> vishnuattur078@gmail.com</span>
+                                <span><a href="https://linkedin.com/in/vishnu-tech" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;"><i class="fab fa-linkedin"></i> linkedin</a></span>
                             </div>
                         </div>
                         <div class="resume-actions-print">
-                            <button type="button" class="cyber-btn sm glow-cyan" onclick="window.print()">
+                            <button type="button" class="cyber-btn sm glow-cyan" onclick="window.print()" title="Print or save as PDF">
                                 <i class="fas fa-print"></i> Print / PDF
                             </button>
+                            <a href="resume.html" target="_blank" class="cyber-btn sm ghost" title="Open full resume in new tab">
+                                <i class="fas fa-external-link-alt"></i> Full View
+                            </a>
                         </div>
                     </header>
 
                     <section class="resume-sec">
-                        <h3><i class="fas fa-user"></i> Professional Profile</h3>
-                        <p>${data.profile.bio}</p>
+                        <h3><i class="fas fa-user-circle"></i> SUMMARY</h3>
+                        <p class="res-summary-text">
+                            Enthusiastic and motivated Information Technology student with a strong interest in AI and Cloud Computing. Possesses foundational knowledge in C programming, data structures, and core computer science principles from coursework at Gnanamani College of Technology. Demonstrated practical application of skills through projects like a C-based salary calculator and network optimization for cloud gaming. Eager to apply theoretical knowledge and problem-solving abilities to a challenging software engineering role and contribute to real-world projects.
+                        </p>
                     </section>
 
                     <section class="resume-sec">
-                        <h3><i class="fas fa-bolt"></i> Technical Competencies</h3>
-                        <div class="res-skills-list">
-                            ${data.skills.map(s => `
-                                <div class="res-skill-pill">
-                                    <strong>${s.name}</strong> (${s.level})
+                        <h3><i class="fas fa-briefcase"></i> EXPERIENCE</h3>
+                        <div class="res-entry-card">
+                            <div class="res-entry-top">
+                                <div>
+                                    <h4 class="res-entry-title">Hands-on Experience</h4>
+                                    <div class="res-entry-subtitle">Self-directed Learning & Practice</div>
                                 </div>
-                            `).join("")}
-                        </div>
-                    </section>
-
-                    <section class="resume-sec">
-                        <h3><i class="fas fa-rocket"></i> Key Projects</h3>
-                        <div class="res-projects-list">
-                            ${data.projects.map(p => `
-                                <div class="res-proj-item">
-                                    <div class="res-proj-top">
-                                        <h4>${p.title}</h4>
-                                        <span class="res-tag-cat">${p.category}</span>
-                                    </div>
-                                    <p>${p.description}</p>
-                                    <div class="res-proj-tags">
-                                        Stack: ${(p.tech || []).join(", ")}
-                                    </div>
-                                </div>
-                            `).join("")}
-                        </div>
-                    </section>
-
-                    <section class="resume-sec">
-                        <h3><i class="fas fa-graduation-cap"></i> Education & Foundation</h3>
-                        <div class="res-proj-item">
-                            <div class="res-proj-top">
-                                <h4>IT & Computer Science Foundations</h4>
-                                <span>Salem, Tamil Nadu</span>
                             </div>
-                            <p>Focused coursework in C Systems Programming, Object-Oriented Software Engineering (Java / C#), and Modern Asynchronous Web Frameworks (FastAPI).</p>
+                            <ul class="res-bullets">
+                                <li>Developed and practiced foundational programming skills by implementing coding exercises in C, including a salary calculation program with input validation.</li>
+                                <li>Explored fundamental cloud computing concepts through NPTEL coursework, gaining theoretical knowledge of virtualization and deployment.</li>
+                                <li>Applied networking concepts by experimenting with DNS and VPN configurations to optimize performance for personal cloud gaming projects.</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section class="resume-sec">
+                        <h3><i class="fas fa-graduation-cap"></i> EDUCATION</h3>
+                        <div class="res-entry-card">
+                            <div class="res-entry-top">
+                                <div>
+                                    <h4 class="res-entry-title">Bachelor of Technology in Information Technology</h4>
+                                    <div class="res-entry-subtitle">Gnanamani College of Technology</div>
+                                </div>
+                                <div class="res-entry-meta">
+                                    <span class="res-badge-cgpa">CGPA: 7.5</span>
+                                </div>
+                            </div>
+                            <div class="res-coursework">
+                                <strong>Relevant Coursework:</strong> Data Structures & Algorithms, Database Management Systems, Operating Systems, Computer Networks, Cloud Computing, Web Development, Machine Learning Basics.
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="resume-sec">
+                        <h3><i class="fas fa-laptop-code"></i> PROJECTS</h3>
+                        
+                        <!-- MindSpace AI Project -->
+                        <div class="res-entry-card highlighted">
+                            <div class="res-entry-top">
+                                <div>
+                                    <h4 class="res-entry-title">MindSpace – Bilingual AI Mental Wellness & Counselling Companion</h4>
+                                    <div class="res-entry-tech">Python · FastAPI · DistilRoBERTa · JavaScript · PWA</div>
+                                </div>
+                            </div>
+                            <ul class="res-bullets">
+                                <li>Developed a full-stack mental wellness companion featuring real-time emotion detection, empathetic multilingual dialogue (English & Tamil), and automated crisis safety guardrails.</li>
+                                <li>Engineered an interactive mobile smartphone PWA interface with Web Audio synthesized soundscapes (Rain, Ocean, 432Hz Singing Bowl), 5 tactile stress-relief games (Pop-It, 4-7-8 Breathing Sphere, Sand & Water Ripples), and speech recognition/TTS.</li>
+                                <li>Built a FastAPI backend with DistilRoBERTa emotion classification model and resilient client-side fallback companion.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Salary Calculation Program in C -->
+                        <div class="res-entry-card">
+                            <div class="res-entry-top">
+                                <div>
+                                    <h4 class="res-entry-title">Salary Calculation Program (C)</h4>
+                                    <div class="res-entry-tech">C Programming · Modular Design · Input Validation</div>
+                                </div>
+                            </div>
+                            <ul class="res-bullets">
+                                <li>Developed a command-line application in C to compute employee salary components based on user-provided inputs.</li>
+                                <li>Implemented principles of modular programming to structure the code for clarity and maintainability.</li>
+                                <li>Incorporated input validation checks to ensure data integrity and prevent erroneous calculations.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Cloud Gaming Optimization on Android -->
+                        <div class="res-entry-card">
+                            <div class="res-entry-top">
+                                <div>
+                                    <h4 class="res-entry-title">Cloud Gaming Optimization (Android)</h4>
+                                    <div class="res-entry-tech">Android · DNS Configuration · VPN Protocols · Latency Analysis</div>
+                                </div>
+                            </div>
+                            <ul class="res-bullets">
+                                <li>Conducted experiments on Android devices to optimize mobile cloud gaming performance by modifying DNS and VPN configurations.</li>
+                                <li>Analyzed and compared network latency across different settings to identify optimal configurations for a smoother gaming experience.</li>
+                                <li>Gained practical insights into network performance tuning and its impact on real-time applications.</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section class="resume-sec">
+                        <h3><i class="fas fa-users"></i> EXTRACURRICULARS & LEADERSHIP</h3>
+                        
+                        <div class="res-entry-card compact">
+                            <div class="res-entry-top">
+                                <h4 class="res-entry-title">Member, Coding Club</h4>
+                            </div>
+                            <ul class="res-bullets">
+                                <li>Actively participated in problem-solving sessions and foundational programming exercises as a member of the college coding club.</li>
+                            </ul>
+                        </div>
+
+                        <div class="res-entry-card compact">
+                            <div class="res-entry-top">
+                                <h4 class="res-entry-title">Participant, 36-hour Hackathon</h4>
+                                <span class="res-date-badge">01/2025 - 01/2025</span>
+                            </div>
+                            <ul class="res-bullets">
+                                <li>Collaborated within a team to develop a project from ideation to prototype under a strict 36-hour time constraint.</li>
+                            </ul>
+                        </div>
+
+                        <div class="res-entry-card compact">
+                            <div class="res-entry-top">
+                                <h4 class="res-entry-title">Volunteer, College Tech Fest</h4>
+                            </div>
+                            <ul class="res-bullets">
+                                <li>Provided support in organizing technical events and offered guidance to participants during the college's annual tech fest.</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section class="resume-sec">
+                        <h3><i class="fas fa-award"></i> ACHIEVEMENTS & CERTIFICATIONS</h3>
+                        <div class="res-cert-grid">
+                            <div class="res-cert-pill">
+                                <i class="fas fa-certificate"></i>
+                                <span><strong>Diploma Certificate</strong> in Basic Programming</span>
+                            </div>
+                            <div class="res-cert-pill">
+                                <i class="fas fa-certificate"></i>
+                                <span><strong>NPTEL Certification</strong> in Cloud Computing</span>
+                            </div>
+                            <div class="res-cert-pill">
+                                <i class="fas fa-trophy"></i>
+                                <span><strong>Hackathon Participation</strong> - 36-hour coding challenge (01/2025)</span>
+                            </div>
+                            <div class="res-cert-pill">
+                                <i class="fas fa-star"></i>
+                                <span><strong>Active contributor</strong> in college coding competitions</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="resume-sec">
+                        <h3><i class="fas fa-tools"></i> SKILLS</h3>
+                        <div class="res-skills-categorized">
+                            <div class="res-skill-group">
+                                <span class="res-skill-cat-title"><i class="fas fa-code"></i> Languages:</span>
+                                <div class="res-skill-tags">
+                                    <span class="res-skill-pill">C</span>
+                                    <span class="res-skill-pill">Python</span>
+                                    <span class="res-skill-pill">Java</span>
+                                </div>
+                            </div>
+                            <div class="res-skill-group">
+                                <span class="res-skill-cat-title"><i class="fas fa-globe"></i> Frontend & Web:</span>
+                                <div class="res-skill-tags">
+                                    <span class="res-skill-pill">HTML</span>
+                                    <span class="res-skill-pill">CSS</span>
+                                    <span class="res-skill-pill">JavaScript</span>
+                                </div>
+                            </div>
+                            <div class="res-skill-group">
+                                <span class="res-skill-cat-title"><i class="fas fa-cloud"></i> Cloud & Infra:</span>
+                                <div class="res-skill-tags">
+                                    <span class="res-skill-pill">Cloud Computing</span>
+                                    <span class="res-skill-pill">Virtualization</span>
+                                    <span class="res-skill-pill">DNS</span>
+                                    <span class="res-skill-pill">VPN</span>
+                                </div>
+                            </div>
+                            <div class="res-skill-group">
+                                <span class="res-skill-cat-title"><i class="fas fa-wrench"></i> Core & Tools:</span>
+                                <div class="res-skill-tags">
+                                    <span class="res-skill-pill">Git</span>
+                                    <span class="res-skill-pill">Problem Solving</span>
+                                </div>
+                            </div>
                         </div>
                     </section>
                 </div>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vishnu S - Software Engineer Resume</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #0284c7;
+            --accent-light: #e0f2fe;
+            --text-main: #1e293b;
+            --text-muted: #475569;
+            --border-color: #cbd5e1;
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 30px 16px;
+        }
+
+        .resume-actions-bar {
+            max-width: 850px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0f172a;
+            color: #ffffff;
+            border: 1px solid #1e293b;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background: #0284c7;
+            border-color: #0284c7;
+            transform: translateY(-1px);
+        }
+
+        .btn-action.ghost {
+            background: #ffffff;
+            color: #0f172a;
+            border-color: #cbd5e1;
+        }
+
+        .btn-action.ghost:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+
+        .resume-container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            border-radius: 12px;
+            padding: 48px 56px;
+        }
+
+        /* Header */
+        .res-header {
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 24px;
+        }
+
+        .res-name-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .res-name {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .res-role {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--accent);
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .res-contact-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 14px;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .res-contact-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .res-contact-item i {
+            color: var(--accent);
+            font-size: 0.95rem;
+        }
+
+        .res-contact-item a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .res-contact-item a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        /* Sections */
+        .res-section {
+            margin-bottom: 24px;
+        }
+
+        .res-sec-heading {
+            font-size: 1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--primary);
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .res-sec-heading i {
+            color: var(--accent);
+            font-size: 0.95rem;
+        }
+
+        .res-summary-body {
+            font-size: 0.92rem;
+            line-height: 1.65;
+            color: #334155;
+            text-align: justify;
+        }
+
+        /* Entry Blocks */
+        .res-block {
+            margin-bottom: 16px;
+        }
+
+        .res-block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .res-block-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .res-block-subtitle {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .res-block-date {
+            font-size: 0.82rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .res-bullets {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-top: 6px;
+        }
+
+        .res-bullets li {
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #334155;
+            margin-bottom: 4px;
+        }
+
+        .res-coursework {
+            font-size: 0.86rem;
+            line-height: 1.55;
+            color: #475569;
+            margin-top: 6px;
+        }
+
+        /* Skills */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .skill-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 0.88rem;
+        }
+
+        .skill-category {
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 140px;
+        }
+
+        .skill-items {
+            color: #334155;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .skill-pill {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+        }
+
+        /* Certifications & Leadership */
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px 16px;
+        }
+
+        .cert-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.87rem;
+            color: #334155;
+        }
+
+        .cert-item i {
+            color: #f59e0b;
+            font-size: 0.85rem;
+        }
+
+        /* Print Media Query */
+        @media print {
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+            }
+
+            .resume-actions-bar {
+                display: none !important;
+            }
+
+            .resume-container {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+
+            .res-name {
+                color: #000000 !important;
+            }
+
+            .res-role {
+                color: #0369a1 !important;
+            }
+
+            .res-sec-heading {
+                border-bottom: 1.5px solid #94a3b8 !important;
+            }
+
+            .skill-pill {
+                background: #f8fafc !important;
+                border-color: #cbd5e1 !important;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .resume-container {
+                padding: 28px 20px;
+            }
+
+            .skills-grid, .cert-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="resume-actions-bar">
+        <a href="index.html" class="btn-action ghost">
+            <i class="fas fa-arrow-left"></i> Back to Portfolio
+        </a>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="window.print()" class="btn-action">
+                <i class="fas fa-print"></i> Print / Save as PDF
+            </button>
+        </div>
+    </div>
+
+    <main class="resume-container">
+        <!-- Header -->
+        <header class="res-header">
+            <div class="res-name-title">
+                <h1 class="res-name">VISHNU S</h1>
+                <div class="res-role">SOFTWARE ENGINEER</div>
+            </div>
+            <div class="res-contact-bar">
+                <span class="res-contact-item">
+                    <i class="fas fa-map-marker-alt"></i> Salem, India
+                </span>
+                <span class="res-contact-item">
+                    <i class="fas fa-phone-alt"></i> 8300518975
+                </span>
+                <span class="res-contact-item">
+                    <i class="fas fa-envelope"></i> <a href="mailto:vishnuattur078@gmail.com">vishnuattur078@gmail.com</a>
+                </span>
+                <span class="res-contact-item">
+                    <i class="fab fa-linkedin"></i> <a href="https://linkedin.com/in/vishnu-tech" target="_blank">linkedin.com/in/vishnu-tech</a>
+                </span>
+            </div>
+        </header>
+
+        <!-- Summary -->
+        <section class="res-section">
+            <h2 class="res-sec-heading"><i class="fas fa-user-circle"></i> SUMMARY</h2>
+            <p class="res-summary-body">
+                Enthusiastic and motivated Information Technology student with a strong interest in AI and Cloud Computing. Possesses foundational knowledge in C programming, data structures, and core computer science principles from coursework at Gnanamani College of Technology. Demonstrated practical application of skills through projects like a C-based salary calculator and network optimization for cloud gaming. Eager to apply theoretical knowledge and problem-solving abilities to a challenging software engineering role and contribute to real-world projects.
+            </p>
+        </section>
+
+        <!-- Experience -->
+        <section class="res-section">
+            <h2 class="res-sec-heading"><i class="fas fa-briefcase"></i> EXPERIENCE</h2>
+            <div class="res-block">
+                <div class="res-block-header">
+                    <div class="res-block-title">Hands-on Experience</div>
+                    <div class="res-block-subtitle">Self-directed Learning & Practice</div>
+                </div>
+                <ul class="res-bullets">
+                    <li>Developed and practiced foundational programming skills by implementing coding exercises in C, including a salary calculation program with input validation.</li>
+                    <li>Explored fundamental cloud computing concepts through NPTEL coursework, gaining theoretical knowledge of virtualization and deployment.</li>
+                    <li>Applied networking concepts by experimenting with DNS and VPN configurations to optimize performance for personal cloud gaming projects.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Education -->
+        <section class="res-section">
+            <h2 class="res-sec-heading"><i class="fas fa-graduation-cap"></i> EDUCATION</h2>
+            <div class="res-block">
+                <div class="res-block-header">
+                    <div class="res-block-title">Bachelor of Technology in Information Technology</div>
+                    <div class="res-block-subtitle">Gnanamani College of Technology</div>
+                </div>
+                <div style="font-size: 0.88rem; font-weight: 600; color: #0f172a; margin-top: 2px;">
+                    CGPA: 7.5
+                </div>
+                <p class="res-coursework">
+                    <strong>Relevant Coursework:</strong> Data Structures & Algorithms, Database Management Systems, Operating Systems, Computer Networks, Cloud Computing, Web Development, Machine Learning Basics.
+                </p>
+            </div>
+        </section>
+
+        <!-- Projects -->
+        <section class="res-section">
+            <h2 class="res-sec-heading"><i class="fas fa-laptop-code"></i> PROJECTS</h2>
+
+            <!-- MindSpace AI Project -->
+            <div class="res-block">
+                <div class="res-block-header">
+                    <div class="res-block-title">MindSpace – Bilingual AI Mental Wellness & Counselling Companion</div>
+                    <div class="res-block-subtitle" style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">Python · FastAPI · DistilRoBERTa · JavaScript · PWA</div>
+                </div>
+                <ul class="res-bullets">
+                    <li>Developed a full-stack mental wellness companion featuring real-time emotion detection, empathetic multilingual dialogue (English & Tamil), and automated crisis safety guardrails.</li>
+                    <li>Engineered an interactive mobile smartphone PWA interface with Web Audio synthesized soundscapes (Rain, Ocean, 432Hz Singing Bowl), 5 tactile stress-relief games (Pop-It, 4-7-8 Breathing Sphere, Kinetic Ripples), and speech-to-text/TTS.</li>
+                    <li>Integrated a FastAPI backend with DistilRoBERTa emotion classification model and resilient client-side companion fallback mode.</li>
+                </ul>
+            </div>
+
+            <!-- Salary Calculation Program -->
+            <div class="res-block">
+                <div class="res-block-header">
+                    <div class="res-block-title">Salary Calculation Program (C)</div>
+                    <div class="res-block-subtitle" style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">C Programming · Modular Design</div>
+                </div>
+                <ul class="res-bullets">
+                    <li>Developed a command-line application in C to compute employee salary components based on user-provided inputs.</li>
+                    <li>Implemented principles of modular programming to structure the code for clarity and maintainability.</li>
+                    <li>Incorporated input validation checks to ensure data integrity and prevent erroneous calculations.</li>
+                </ul>
+            </div>
+
+            <!-- Cloud Gaming Optimization -->
+            <div class="res-block">
+                <div class="res-block-header">
+                    <div class="res-block-title">Cloud Gaming Optimization (Android)</div>
+                    <div class="res-block-subtitle" style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">Android · DNS · VPN · Latency Optimization</div>
+                </div>
+                <ul class="res-bullets">
+                    <li>Conducted experiments on Android devices to optimize mobile cloud gaming performance by modifying DNS and VPN configurations.</li>
+                    <li>Analyzed and compared network latency across different settings to identify optimal configurations for a smoother gaming experience.</li>
+                    <li>Gained practical insights into network performance tuning and its impact on real-time applications.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Extracurriculars & Leadership -->
+        <section class="res-section">
+            <h2 class="res-sec-heading"><i class="fas fa-users"></i> EXTRACURRICULARS & LEADERSHIP</h2>
+
+            <div class="res-block" style="margin-bottom: 10px;">
+                <div class="res-block-header">
+                    <div class="res-block-title">Member, Coding Club</div>
+                </div>
+                <ul class="res-bullets">
+                    <li>Actively participated in problem-solving sessions and foundational programming exercises as a member of the college coding club.</li>
+                </ul>
+            </div>
+
+            <div class="res-block" style="margin-bottom: 10px;">
+                <div class="res-block-header">
+                    <div class="res-block-title">Participant, 36-hour Hackathon</div>
+                    <div class="res-block-date">01/2025 - 01/2025</div>
+                </div>
+                <ul class="res-bullets">
+                    <li>Collaborated within a team to develop a project from ideation to prototype under a strict 36-hour time constraint.</li>
+                </ul>
+            </div>
+
+            <div class="res-block">
+                <div class="res-block-header">
+                    <div class="res-block-title">Volunteer, College Tech Fest</div>
+                </div>
+                <ul class="res-bullets">
+                    <li>Provided support in organizing technical events and offered guidance to participants during the college's annual tech fest.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Achievements & Certifications -->
+        <section class="res-section">
+            <h2 class="res-sec-heading"><i class="fas fa-award"></i> ACHIEVEMENTS & CERTIFICATIONS</h2>
+            <div class="cert-grid">
+                <div class="cert-item">
+                    <i class="fas fa-certificate"></i>
+                    <span><strong>Diploma Certificate</strong> in Basic Programming</span>
+                </div>
+                <div class="cert-item">
+                    <i class="fas fa-certificate"></i>
+                    <span><strong>NPTEL Certification</strong> in Cloud Computing</span>
+                </div>
+                <div class="cert-item">
+                    <i class="fas fa-trophy"></i>
+                    <span><strong>Hackathon Participation</strong> - 36-hour coding challenge (01/2025)</span>
+                </div>
+                <div class="cert-item">
+                    <i class="fas fa-star"></i>
+                    <span><strong>Active contributor</strong> in college coding competitions</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills -->
+        <section class="res-section" style="margin-bottom: 0;">
+            <h2 class="res-sec-heading"><i class="fas fa-tools"></i> SKILLS</h2>
+            <div class="skills-grid">
+                <div class="skill-row">
+                    <span class="skill-category">Languages:</span>
+                    <div class="skill-items">
+                        <span class="skill-pill">C</span>
+                        <span class="skill-pill">Python</span>
+                        <span class="skill-pill">Java</span>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <span class="skill-category">Frontend & Web:</span>
+                    <div class="skill-items">
+                        <span class="skill-pill">HTML</span>
+                        <span class="skill-pill">CSS</span>
+                        <span class="skill-pill">JavaScript</span>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <span class="skill-category">Cloud & Infra:</span>
+                    <div class="skill-items">
+                        <span class="skill-pill">Cloud Computing</span>
+                        <span class="skill-pill">Virtualization</span>
+                        <span class="skill-pill">DNS</span>
+                        <span class="skill-pill">VPN</span>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <span class="skill-category">Core & Tools:</span>
+                    <div class="skill-items">
+                        <span class="skill-pill">Git</span>
+                        <span class="skill-pill">Problem Solving</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
