@@ -1,0 +1,294 @@
+/* ==========================================================================
+   CINEMATIC SCI-FI INTRO OVERLAY & VIDEO STYLES
+   ========================================================================== */
+
+#portfolio-intro-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999999;
+    background: #05060b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#portfolio-intro-overlay.exiting {
+    opacity: 0;
+    transform: scale(1.08);
+    filter: blur(16px);
+    pointer-events: none;
+}
+
+/* Background Video */
+.intro-video-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+}
+
+#intro-tech-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.65;
+    filter: contrast(1.15) saturate(1.2);
+}
+
+/* Scrim & Scanline Overlay */
+.intro-scrim-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(6, 8, 16, 0.35) 0%, rgba(5, 6, 11, 0.92) 85%);
+    z-index: 1;
+}
+
+.intro-scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.75;
+}
+
+/* Top Bar Controls (Skip & Audio Toggle) */
+.intro-top-ctrls {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 10;
+}
+
+.intro-ctrl-btn {
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-cyan);
+    color: #e2e8f0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    padding: 8px 16px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.intro-ctrl-btn:hover {
+    background: rgba(0, 240, 255, 0.2);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+.intro-ctrl-btn.active {
+    border-color: var(--neon-emerald);
+    color: #6ee7b7;
+}
+
+/* Center HUD Display */
+.intro-hud-content {
+    position: relative;
+    z-index: 5;
+    max-width: 680px;
+    width: 90%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Targeting Reticle & Holographic Badge */
+.intro-reticle-box {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reticle-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1.5px dashed var(--neon-cyan);
+    width: 100%;
+    height: 100%;
+    animation: rotateReticle 16s linear infinite;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
+}
+
+.reticle-ring-inner {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid var(--neon-purple);
+    width: 74%;
+    height: 74%;
+    animation: rotateReticleReverse 10s linear infinite;
+}
+
+.reticle-center-symbol {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 12px var(--neon-cyan));
+}
+
+@keyframes rotateReticle {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes rotateReticleReverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+/* Title & Tagline */
+.intro-name-title {
+    font-family: var(--font-heading);
+    font-size: 4rem;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: #ffffff;
+    line-height: 1;
+    margin-bottom: 8px;
+    text-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+}
+
+.intro-tagline-text {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--neon-cyan);
+    margin-bottom: 28px;
+    text-transform: uppercase;
+}
+
+/* Terminal Log Display */
+.intro-terminal-box {
+    background: rgba(8, 12, 26, 0.85);
+    border: 1px solid var(--border-cyan);
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(0, 240, 255, 0.05);
+}
+
+.terminal-line {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: #6ee7b7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.terminal-line .cursor-blink {
+    animation: blinkCursor 1s step-end infinite;
+}
+
+@keyframes blinkCursor {
+    50% { opacity: 0; }
+}
+
+/* Progress Bar Track */
+.intro-progress-container {
+    width: 100%;
+    max-width: 440px;
+    margin-bottom: 30px;
+}
+
+.intro-progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.intro-progress-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.intro-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+    box-shadow: 0 0 15px var(--neon-cyan);
+    border-radius: 999px;
+    transition: width 0.06s ease;
+}
+
+/* Enter Portfolio Button */
+.intro-enter-btn {
+    padding: 14px 34px;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+.intro-enter-btn.pulse-glow {
+    animation: pulseEnterBtn 1.8s infinite;
+}
+
+@keyframes pulseEnterBtn {
+    0% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); transform: scale(1); }
+    50% { box-shadow: 0 0 35px rgba(0, 240, 255, 0.8), 0 0 20px rgba(168, 85, 247, 0.6); transform: scale(1.04); }
+    100% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); transform: scale(1); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .intro-name-title {
+        font-size: 2.8rem;
+    }
+    .intro-tagline-text {
+        font-size: 0.78rem;
+    }
+    .intro-top-ctrls {
+        top: 16px;
+        right: 16px;
+    }
+}
