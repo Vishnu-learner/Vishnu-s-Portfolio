@@ -43,7 +43,7 @@ const DEFAULT_PORTFOLIO_DATA = {
 
         devfolio: "https://devfolio.co/@vishnu",
 
-        linkedin: "https://linkedin.com/in/vishnu-tech",
+        linkedin: "https://www.linkedin.com/in/vishnu-s-972a29382",
 
         locationText: "Salem, Tamil Nadu, India"
 
