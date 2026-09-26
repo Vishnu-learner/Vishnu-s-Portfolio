@@ -602,3 +602,170 @@
         grid-column: span 12;
     }
 }
+
+/* Form Label Row with Forgot Password Link */
+.form-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.form-label-row label {
+    margin-bottom: 0 !important;
+}
+
+.btn-forgot-pass-link {
+    background: none;
+    border: none;
+    color: var(--neon-cyan);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    padding: 0;
+    transition: var(--transition-fast);
+}
+
+.btn-forgot-pass-link:hover {
+    color: #ffffff;
+    text-shadow: 0 0 8px var(--neon-cyan);
+}
+
+/* Password Recovery Views */
+.recovery-intro {
+    background: rgba(0, 240, 255, 0.05);
+    border-left: 3px solid var(--neon-cyan);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 20px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.recovery-code-card {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.code-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--neon-emerald);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+}
+
+.code-display-token {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 14px 0;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px dashed var(--neon-emerald);
+}
+
+.token-label {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.token-number {
+    font-family: var(--font-mono);
+    font-size: 1.6rem;
+    letter-spacing: 5px;
+    color: var(--neon-emerald);
+    text-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+}
+
+.token-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Multi-Device & Cloud Synchronization Tab Styles */
+.sync-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.sync-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-glass);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: var(--transition-smooth);
+}
+
+.sync-card:hover {
+    border-color: rgba(0, 240, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sync-card-header {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.sync-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(0, 240, 255, 0.12);
+    color: var(--neon-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.sync-card-header h4 {
+    font-size: 1.05rem;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.sync-card-header p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+}
+
+.sync-action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.glow-purple {
+    background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #c084fc !important;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+}
+
+.glow-purple:hover {
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.6);
+    transform: translateY(-2px);
+}

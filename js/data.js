@@ -31,13 +31,10 @@ const DEFAULT_PORTFOLIO_DATA = {
     },
 
     auth: {
-
-        adminEmail: "vishnu@gmail.com",
-
-        adminPass: "vishnu2026",
-
+        adminId: "shurasura",
+        adminEmail: "vishnuattur078@gmail.com",
+        adminPass: "madara uchiha",
         ownerName: "Vishnu"
-
     },
 
     socials: {
@@ -219,164 +216,231 @@ Comparing both side-by-side reinforces core engineering discipline: design for m
 
 
 const STORAGE_KEY = "vishnu_portfolio_v3";
-
-
+const CLOUD_URL_KEY = "vishnu_portfolio_cloud_url";
+const GITHUB_TOKEN_KEY = "vishnu_portfolio_gh_token";
 
 class PortfolioStore {
-
     constructor() {
-
+        this.cloudEndpoint = localStorage.getItem(CLOUD_URL_KEY) || "";
         this.data = this.loadData();
 
+        // Perform background cloud sync across all devices if configured
+        if (this.cloudEndpoint) {
+            this.syncFromCloud();
+        }
     }
-
-
 
     loadData() {
-
         try {
-
             const raw = localStorage.getItem(STORAGE_KEY);
-
             if (raw) {
-
                 const parsed = JSON.parse(raw);
-
                 if (parsed.socials) {
-
                     if (parsed.socials.email === "vishnu.impact@gmail.com" || !parsed.socials.email) {
-
                         parsed.socials.email = "vishnuattur078@gmail.com";
-
                     }
-
                     delete parsed.socials.github;
-
                     delete parsed.socials.twitter;
-
                 }
-
-                return {
-
-                    ...DEFAULT_PORTFOLIO_DATA,
-
-                    ...parsed,
-
-                    profile: { ...DEFAULT_PORTFOLIO_DATA.profile, ...(parsed.profile || {}) },
-
-                    auth: { ...DEFAULT_PORTFOLIO_DATA.auth, ...(parsed.auth || {}) },
-
-                    socials: { ...DEFAULT_PORTFOLIO_DATA.socials, ...(parsed.socials || {}) }
-
-                };
-
+                return this.mergeWithDefaults(parsed);
             }
-
         } catch (e) {
-
             console.error("Failed to load stored portfolio data, using defaults:", e);
-
         }
-
         return JSON.parse(JSON.stringify(DEFAULT_PORTFOLIO_DATA));
-
     }
 
+    mergeWithDefaults(parsed) {
+        return {
+            ...DEFAULT_PORTFOLIO_DATA,
+            ...parsed,
+            profile: { ...DEFAULT_PORTFOLIO_DATA.profile, ...(parsed.profile || {}) },
+            auth: { ...DEFAULT_PORTFOLIO_DATA.auth, ...(parsed.auth || {}) },
+            socials: { ...DEFAULT_PORTFOLIO_DATA.socials, ...(parsed.socials || {}) }
+        };
+    }
 
-
-    saveData(newData) {
-
+    async saveData(newData) {
         this.data = newData;
-
+        let localSuccess = false;
         try {
-
             localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
-
             window.dispatchEvent(new CustomEvent("portfolioDataChanged", { detail: this.data }));
-
-            return true;
-
+            localSuccess = true;
         } catch (e) {
-
-            console.error("Failed to persist portfolio data:", e);
-
-            return false;
-
+            console.error("Failed to persist portfolio data locally:", e);
         }
 
+        // Push to cloud endpoint if active for multi-device sync
+        if (this.cloudEndpoint) {
+            try {
+                const res = await fetch(this.cloudEndpoint, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(this.data)
+                });
+                if (res.ok) {
+                    return { success: true, cloudSynced: true };
+                } else {
+                    return { success: localSuccess, cloudSynced: false, cloudError: `HTTP ${res.status}` };
+                }
+            } catch (err) {
+                console.warn("Cloud sync save warning:", err);
+                return { success: localSuccess, cloudSynced: false, cloudError: err.message };
+            }
+        }
+        return { success: localSuccess, cloudSynced: false };
     }
 
+    setCloudEndpoint(url) {
+        this.cloudEndpoint = (url || "").trim();
+        if (this.cloudEndpoint) {
+            localStorage.setItem(CLOUD_URL_KEY, this.cloudEndpoint);
+            return this.syncFromCloud();
+        } else {
+            localStorage.removeItem(CLOUD_URL_KEY);
+            return Promise.resolve({ success: true, cleared: true });
+        }
+    }
 
+    async syncFromCloud() {
+        if (!this.cloudEndpoint) return { success: false, reason: "No cloud endpoint configured" };
+        try {
+            const res = await fetch(this.cloudEndpoint);
+            if (res.ok) {
+                const cloudJson = await res.json();
+                if (cloudJson && (cloudJson.profile || cloudJson.skills)) {
+                    this.data = this.mergeWithDefaults(cloudJson);
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+                    window.dispatchEvent(new CustomEvent("portfolioDataChanged", { detail: this.data }));
+                    return { success: true, data: this.data };
+                }
+            }
+            return { success: false, reason: `HTTP ${res.status}` };
+        } catch (err) {
+            console.warn("Failed to fetch from cloud sync endpoint:", err);
+            return { success: false, error: err.message };
+        }
+    }
+
+    async pushToCloud() {
+        if (!this.cloudEndpoint) {
+            return { success: false, reason: "No cloud endpoint configured" };
+        }
+        try {
+            const res = await fetch(this.cloudEndpoint, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(this.data)
+            });
+            return { success: res.ok, status: res.status };
+        } catch (err) {
+            return { success: false, error: err.message };
+        }
+    }
 
     resetToDefaults() {
-
         this.data = JSON.parse(JSON.stringify(DEFAULT_PORTFOLIO_DATA));
-
         localStorage.removeItem(STORAGE_KEY);
-
         window.dispatchEvent(new CustomEvent("portfolioDataChanged", { detail: this.data }));
-
+        if (this.cloudEndpoint) {
+            this.pushToCloud().catch(e => console.warn(e));
+        }
         return this.data;
-
     }
-
-
 
     exportJSON() {
-
         const jsonStr = JSON.stringify(this.data, null, 2);
-
         const blob = new Blob([jsonStr], { type: "application/json" });
-
         const url = URL.createObjectURL(blob);
-
         const a = document.createElement("a");
-
         a.href = url;
-
         a.download = `vishnu-portfolio-backup-${new Date().toISOString().slice(0, 10)}.json`;
-
         document.body.appendChild(a);
-
         a.click();
-
         document.body.removeChild(a);
-
         URL.revokeObjectURL(url);
-
     }
-
-
 
     importJSON(jsonString) {
-
         try {
-
             const parsed = JSON.parse(jsonString);
-
             if (!parsed.profile || !parsed.skills) {
-
                 throw new Error("Invalid portfolio data structure.");
-
             }
-
             this.saveData(parsed);
-
             return { success: true };
-
         } catch (err) {
-
             return { success: false, error: err.message };
-
         }
-
     }
 
+    // Direct GitHub deployment integration
+    async publishToGitHub(token, repo = "Vishnu-learner/Vishnu-s-Portfolio", branch = "main") {
+        if (!token) throw new Error("GitHub Personal Access Token is required.");
+        const filePath = "js/data.js";
+        const apiUrl = `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}`;
+
+        // Get current file sha
+        const getRes = await fetch(apiUrl, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Accept": "application/vnd.github.v3+json"
+            }
+        });
+
+        if (!getRes.ok && getRes.status !== 404) {
+            throw new Error(`Failed to fetch file from GitHub: ${getRes.statusText}`);
+        }
+
+        const getData = getRes.ok ? await getRes.json() : null;
+        const sha = getData ? getData.sha : undefined;
+
+        // Generate updated data.js content
+        const newCode = this.generateDataJsContent();
+        // UTF-8 base64 encoding
+        const base64Content = btoa(unescape(encodeURIComponent(newCode)));
+
+        const putRes = await fetch(apiUrl, {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Accept": "application/vnd.github.v3+json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: `Update portfolio data from Admin CMS [${new Date().toISOString()}]`,
+                content: base64Content,
+                sha: sha,
+                branch: branch
+            })
+        });
+
+        if (!putRes.ok) {
+            const errData = await putRes.json().catch(() => ({}));
+            throw new Error(errData.message || `GitHub Commit failed with status ${putRes.status}`);
+        }
+
+        return await putRes.json();
+    }
+
+    generateDataJsContent() {
+        return `/**
+ * Data Store & State Management for Vishnu's Portfolio
+ * Updated: ${new Date().toISOString()}
+ */
+
+const DEFAULT_PORTFOLIO_DATA = ${JSON.stringify(this.data, null, 4)};
+
+${this.getStoreCodeSource()}
+`;
+    }
+
+    getStoreCodeSource() {
+        // Return store definition
+        return PortfolioStore.toString() + "\n\n// Global singleton instance\nwindow.portfolioStore = new PortfolioStore();";
+    }
 }
 
-
-
 // Global singleton instance
-
 window.portfolioStore = new PortfolioStore();
-

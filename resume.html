@@ -291,9 +291,22 @@
 
         /* Print Media Query */
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm 12mm;
+            }
+
             body {
                 background: #ffffff !important;
                 padding: 0 !important;
+            }
+
+            .res-section {
+                page-break-inside: avoid;
+            }
+
+            .res-block {
+                page-break-inside: avoid;
             }
 
             .resume-actions-bar {
@@ -552,5 +565,13 @@
             </div>
         </section>
     </main>
+    <script>
+        // Auto trigger print if parameter passed
+        if (window.location.search.includes('print=true') || window.location.search.includes('download=1')) {
+            window.addEventListener('load', function() {
+                setTimeout(function() { window.print(); }, 400);
+            });
+        }
+    </script>
 </body>
 </html>
