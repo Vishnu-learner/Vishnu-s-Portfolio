@@ -292,7 +292,7 @@ class AdminManager {
         const email = emailInput ? emailInput.value.trim().toLowerCase() : "";
         const errBox = document.getElementById("recovery-status-1");
 
-        // STRICT OWNER EMAIL VALIDATION
+        // STRICT OWNER EMAIL RESTRICTION
         if (email !== "vishnuattur078@gmail.com") {
             errBox.style.display = "flex";
             errBox.className = "auth-error-msg";
@@ -311,28 +311,24 @@ class AdminManager {
             expiresAt: Date.now() + 15 * 60 * 1000 // 15 mins validity
         };
 
-        // Dispatch email notification via public relay / client dispatch
+        // Dispatch real email to vishnuattur078@gmail.com
         this.dispatchRecoveryCode(email, code);
 
-        // Switch to Step 2
+        // Switch to Step 2 WITHOUT showing the code on screen
         document.getElementById("recovery-step-1").style.display = "none";
         const step2 = document.getElementById("recovery-step-2");
         step2.style.display = "block";
 
         const dispatchBox = document.getElementById("recovery-dispatch-box");
         dispatchBox.innerHTML = `
-            <div class="recovery-code-card">
-                <div class="code-card-header">
-                    <i class="fas fa-envelope-open-text"></i>
-                    <span>Authorization Code Generated &amp; Dispatched</span>
+            <div class="recovery-status-card">
+                <div class="status-card-header">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Verification Code Dispatched</span>
                 </div>
-                <p>A 6-digit recovery code was dispatched to <strong>${email}</strong>.</p>
-                <div class="code-display-token">
-                    <span class="token-label">Verification Code:</span>
-                    <strong class="token-number">${code}</strong>
-                </div>
-                <div class="token-meta">
-                    <i class="fas fa-stopwatch"></i> Valid for 15 minutes. Enter this code below to set your new password.
+                <p>A secret 6-digit authorization code has been dispatched to <strong>${email}</strong>.</p>
+                <div class="status-card-meta">
+                    <i class="fas fa-shield-alt"></i> For security, the verification code is never shown on screen. Please check your Gmail inbox (and Spam/Junk folder) and enter the code below.
                 </div>
             </div>
         `;
@@ -344,21 +340,60 @@ class AdminManager {
         }, 200);
     }
 
-    dispatchRecoveryCode(email, code) {
-        // Attempt web submission or mail relay
+    async dispatchRecoveryCode(email, code) {
+        const subject = `Your Admin Security Key Reset Code: ${code}`;
+        const messageBody = `Hello Vishnu,
+
+Your 6-digit verification code to reset your Portfolio Admin Security Key is:
+
+${code}
+
+This code is valid for 15 minutes. Enter this code on your portfolio owner verification screen to choose a new password.
+
+If you did not request this code, your account remains secure and you can disregard this email.`;
+
+        // 1. Dispatch via FormSubmit AJAX (direct forwarding to vishnuattur078@gmail.com)
         try {
-            fetch("https://api.web3forms.com/submit", {
+            fetch(`https://formsubmit.co/ajax/${encodeURIComponent(email)}`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
                 body: JSON.stringify({
-                    access_key: "portfolio-auth-relay",
-                    subject: "Vishnu Portfolio - Admin Recovery Code",
-                    email: email,
-                    message: `Your Vishnu Portfolio Admin Security Key reset verification code is: ${code}. Valid for 15 minutes.`
+                    _subject: subject,
+                    "Verification Code": code,
+                    "Recipient Email": email,
+                    "Notice": `Your secret 6-digit code to reset your security key is: ${code}. Valid for 15 minutes.`,
+                    "_template": "table",
+                    "_captcha": "false"
                 })
             }).catch(() => {});
         } catch (e) {
-            // Dispatch error ignored as on-screen token card is securely displayed
+            console.warn("FormSubmit dispatch attempt:", e);
+        }
+
+        // 2. Dispatch via Web3Forms if an access key is configured
+        const web3Key = (window.portfolioStore && window.portfolioStore.data.auth.web3formsKey) || localStorage.getItem("vishnu_web3forms_key") || "";
+        if (web3Key) {
+            try {
+                fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        access_key: web3Key,
+                        subject: subject,
+                        from_name: "Vishnu Portfolio Security",
+                        email: email,
+                        message: messageBody
+                    })
+                }).catch(() => {});
+            } catch (e) {
+                console.warn("Web3Forms dispatch attempt:", e);
+            }
         }
     }
 

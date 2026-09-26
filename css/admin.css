@@ -639,61 +639,46 @@
     border-left: 3px solid var(--neon-cyan);
     padding: 12px 16px;
     border-radius: 0 8px 8px 0;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     font-size: 0.88rem;
     line-height: 1.5;
     color: var(--text-secondary);
 }
 
-.recovery-code-card {
-    background: rgba(16, 185, 129, 0.08);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+.recovery-status-card {
+    background: rgba(0, 240, 255, 0.06);
+    border: 1px solid rgba(0, 240, 255, 0.25);
     border-radius: 12px;
-    padding: 16px 20px;
+    padding: 18px 20px;
     margin-bottom: 20px;
     text-align: center;
 }
 
-.code-card-header {
+.status-card-header {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    color: var(--neon-emerald);
+    color: var(--neon-cyan);
     font-weight: 600;
-    font-size: 0.9rem;
-    margin-bottom: 6px;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
 }
 
-.code-display-token {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin: 14px 0;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 10px 18px;
-    border-radius: 8px;
-    border: 1px dashed var(--neon-emerald);
+.recovery-status-card p {
+    font-size: 0.88rem;
+    color: #ffffff;
+    margin-bottom: 10px;
 }
 
-.token-label {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
+.status-card-meta {
+    font-size: 0.82rem;
     color: var(--text-muted);
-}
-
-.token-number {
-    font-family: var(--font-mono);
-    font-size: 1.6rem;
-    letter-spacing: 5px;
-    color: var(--neon-emerald);
-    text-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
-}
-
-.token-meta {
-    font-size: 0.8rem;
-    color: var(--text-muted);
+    line-height: 1.5;
+    background: rgba(0, 0, 0, 0.35);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-glass);
 }
 
 /* Multi-Device & Cloud Synchronization Tab Styles */
