@@ -19,745 +19,259 @@
 
 
 class AvatarParticleMatrix {
-
     constructor() {
-
         this.card = document.getElementById("hero-avatar-card");
-
         this.container = document.getElementById("avatar-image-container");
-
         this.img = document.getElementById("hero-avatar-img");
-
         this.canvas = document.getElementById("avatar-particle-canvas");
-
         this.scanBeam = document.getElementById("avatar-scan-beam");
-
         this.statusText = document.getElementById("hud-status-text");
-
         this.statusPct = document.getElementById("hud-status-pct");
-
         this.rescanBtn = document.getElementById("btn-rescan-avatar");
-
-
+        this.btnLabel = document.getElementById("btn-toggle-avatar-text");
 
         if (!this.canvas || !this.img || !this.container) return;
 
-
-
         this.ctx = this.canvas.getContext("2d");
-
-        this.particles = [];
-
-        this.ambientParticles = [];
-
-        this.width = 0;
-
-        this.height = 0;
-
         this.dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-        this.state = "dispersed"; // "dispersed" | "integrating" | "assembled"
+        this.realSrc = window.portfolioStore?.data?.profile?.avatar || "assets/avatar.jpg";
+        this.avatar3dSrc = window.portfolioStore?.data?.profile?.avatar3d || "assets/avatar_3d.jpg";
+        this.currentMode = "real"; // "real" | "3d"
+        this.isTransitioning = false;
 
-        this.progress = 0;
+        this.particles = [];
+        this.width = 0;
+        this.height = 0;
+        this.animId = null;
 
-        this.hasTriggeredOnce = false;
-
-        this.mouse = { x: -1000, y: -1000, active: false };
-
-
-
+        this.preloadImages();
         this.init();
-
     }
 
-
+    preloadImages() {
+        const p1 = new Image();
+        p1.src = this.realSrc;
+        const p2 = new Image();
+        p2.src = this.avatar3dSrc;
+    }
 
     init() {
-
         this.setupDimensions();
 
-        this.createParticles();
+        // Ensure real IT photo is active and crystal-clear on initial load
+        this.img.src = this.realSrc;
+        this.img.classList.remove("disassembled");
+        this.ctx.clearRect(0, 0, this.width, this.height);
 
+        this.updateUI();
         this.bindEvents();
-
-        this.setupObserver();
-
-        this.render();
-        if (this.img && !this.img.complete) {
-            this.img.addEventListener(load, () => {
-                this.setupDimensions();
-                this.createParticles();
-            });
-        }
-
     }
 
-
-
     setupDimensions() {
-
         const rect = this.container.getBoundingClientRect();
-
         this.width = rect.width || 348;
-
         this.height = rect.height || 448;
 
         this.canvas.width = this.width * this.dpr;
-
         this.canvas.height = this.height * this.dpr;
-
         this.canvas.style.width = `${this.width}px`;
-
         this.canvas.style.height = `${this.height}px`;
 
         this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-
     }
-
-
-
-    sampleImagePixels(cols, rows) {
-
-        try {
-
-            if (!this.img || !this.img.complete || this.img.naturalWidth === 0) return null;
-
-            const off = document.createElement("canvas");
-
-            off.width = cols;
-
-            off.height = rows;
-
-            const octx = off.getContext("2d", { willReadFrequently: true });
-
-            octx.drawImage(this.img, 0, 0, cols, rows);
-
-            return octx.getImageData(0, 0, cols, rows).data;
-
-        } catch (e) {
-
-            return null;
-
-        }
-
-    }
-
-
-
-    createParticles() {
-
-        this.particles = [];
-
-        const cols = 36;
-
-        const rows = 48;
-
-        const colW = this.width / cols;
-
-        const rowH = this.height / rows;
-
-
-
-        const pixelData = this.sampleImagePixels(cols, rows);
-
-
-
-        const cyberColors = [
-
-            "rgba(0, 240, 255, ",   // Neon cyan
-
-            "rgba(168, 85, 247, ",  // Electric purple
-
-            "rgba(45, 212, 191, ",  // Turquoise
-
-            "rgba(251, 191, 36, ",  // Warm amber
-
-            "rgba(255, 255, 255, "  // Specular diamond
-
-        ];
-
-
-
-        for (let r = 0; r < rows; r++) {
-
-            for (let c = 0; c < cols; c++) {
-
-                const targetX = (c + 0.5) * colW;
-
-                const targetY = (r + 0.5) * rowH;
-
-
-
-                // Scatter in 3D holographic field
-
-                const angle = Math.random() * Math.PI * 2;
-
-                const distance = Math.random() * 280 + 120;
-
-                const originX = targetX + Math.cos(angle) * distance;
-
-                const originY = targetY + Math.sin(angle) * distance - (Math.random() * 120 + 50);
-
-
-
-                let colorBase;
-
-                if (pixelData) {
-
-                    const idx = (r * cols + c) * 4;
-
-                    const pr = pixelData[idx];
-
-                    const pg = pixelData[idx + 1];
-
-                    const pb = pixelData[idx + 2];
-
-                    // Mix sampled pixel with cyber tint
-
-                    colorBase = `rgba(${pr}, ${pg}, ${pb}, `;
-
-                } else {
-
-                    colorBase = cyberColors[Math.floor(Math.random() * cyberColors.length)];
-
-                }
-
-
-
-                const alpha = Math.random() * 0.4 + 0.6;
-
-                const radius = Math.random() * 1.5 + 1.2;
-
-
-
-                this.particles.push({
-
-                    targetX,
-
-                    targetY,
-
-                    x: originX,
-
-                    y: originY,
-
-                    originX,
-
-                    originY,
-
-                    vx: (Math.random() - 0.5) * 4,
-
-                    vy: (Math.random() - 0.5) * 4,
-
-                    radius,
-
-                    baseRadius: radius,
-
-                    colorBase,
-
-                    alpha,
-
-                    // Cascade timing: top activates first, flowing down with scanbeam
-
-                    triggerProgress: (r / rows) * 0.70 + (Math.random() * 0.16),
-
-                    active: false,
-
-                    assembled: false,
-
-                    sparkle: Math.random() * Math.PI * 2
-
-                });
-
-            }
-
-        }
-
-
-
-        // Ambient floating embers
-
-        this.ambientParticles = [];
-
-        for (let i = 0; i < 45; i++) {
-
-            this.ambientParticles.push({
-
-                x: Math.random() * this.width,
-
-                y: Math.random() * this.height,
-
-                vx: (Math.random() - 0.5) * 0.6,
-
-                vy: -Math.random() * 0.8 - 0.2,
-
-                radius: Math.random() * 1.5 + 0.8,
-
-                alpha: Math.random() * 0.5 + 0.2,
-
-                colorBase: Math.random() > 0.5 ? "rgba(0, 240, 255, " : "rgba(168, 85, 247, "
-
-            });
-
-        }
-
-    }
-
-
 
     bindEvents() {
-
         window.addEventListener("resize", () => {
-
             this.setupDimensions();
-
-            if (this.state === "assembled") {
-
-                this.particles.forEach(p => {
-
-                    p.x = p.targetX;
-
-                    p.y = p.targetY;
-
-                });
-
-            }
-
         }, { passive: true });
 
-
-
-        // Mouse hover interaction inside avatar card
-
-        this.card.addEventListener("mousemove", (e) => {
-
-            const rect = this.container.getBoundingClientRect();
-
-            this.mouse.x = e.clientX - rect.left;
-
-            this.mouse.y = e.clientY - rect.top;
-
-            this.mouse.active = true;
-
-        }, { passive: true });
-
-
-
-        this.card.addEventListener("mouseleave", () => {
-
-            this.mouse.active = false;
-
+        // Clicking the avatar image container triggers disintegration and toggle
+        this.container.addEventListener("click", () => {
+            this.toggle();
         });
 
-
-
-        // Re-scan trigger button
-
+        // Clicking the switcher button triggers disintegration and toggle
         if (this.rescanBtn) {
-
             this.rescanBtn.addEventListener("click", (e) => {
-
                 e.stopPropagation();
-
-                this.rescan();
-
+                this.toggle();
             });
-
         }
+    }
 
-
-
-        // Clicking card re-scans if already assembled
-
-        this.card.addEventListener("click", () => {
-
-            if (this.state === "assembled") {
-
-                this.rescan();
-
+    updateUI() {
+        if (this.currentMode === "real") {
+            if (this.statusText) {
+                this.statusText.innerHTML = '<strong style="color:#00f0ff;">REAL IT PROFILE</strong> &bull; CLICK TO DISINTEGRATE';
             }
-
-        });
-
+            if (this.rescanBtn) {
+                this.rescanBtn.innerHTML = '<i class="fas fa-cube" style="color:#a855f7;"></i> <span id="btn-toggle-avatar-text">Switch to 3D</span>';
+                this.rescanBtn.title = "Click to disintegrate and view 3D Cyber Avatar";
+            }
+        } else {
+            if (this.statusText) {
+                this.statusText.innerHTML = '<strong style="color:#a855f7;">3D CYBER AVATAR</strong> &bull; CLICK TO DISINTEGRATE';
+            }
+            if (this.rescanBtn) {
+                this.rescanBtn.innerHTML = '<i class="fas fa-user-tie" style="color:#00f0ff;"></i> <span id="btn-toggle-avatar-text">Switch to Real</span>';
+                this.rescanBtn.title = "Click to disintegrate and view Real IT Photo";
+            }
+        }
     }
 
+    toggle() {
+        if (this.isTransitioning) return;
+        this.isTransitioning = true;
 
+        const nextMode = (this.currentMode === "real") ? "3d" : "real";
+        const nextSrc = (nextMode === "real") ? this.realSrc : this.avatar3dSrc;
+        const nextLabel = (nextMode === "real") ? "Real IT Portrait" : "3D Cyber Avatar";
 
-    setupObserver() {
+        // Phase 1: Disintegrate active avatar
+        this.img.classList.remove("assembling");
+        this.img.classList.add("disintegrating");
 
-        const observer = new IntersectionObserver((entries) => {
-
-            entries.forEach(entry => {
-
-                if (entry.isIntersecting && !this.hasTriggeredOnce) {
-
-                    this.hasTriggeredOnce = true;
-
-                    setTimeout(() => this.startIntegration(), 300);
-
-                }
-
-            });
-
-        }, { threshold: 0.15 });
-
-
-
-        observer.observe(this.card);
-
-    }
-
-
-
-    rescan() {
-
-        if (this.state === "integrating") return;
-
-        this.state = "dispersed";
-
-        this.progress = 0;
-
-
-
-        // Disperse particles with explosive velocity
-
-        this.particles.forEach(p => {
-
-            const angle = Math.random() * Math.PI * 2;
-
-            const force = Math.random() * 14 + 6;
-
-            p.vx = Math.cos(angle) * force;
-
-            p.vy = Math.sin(angle) * force;
-
-            p.active = false;
-
-            p.assembled = false;
-
-        });
-
-
-
-        // Glitch out the image
-
-        this.img.classList.remove("assembled");
-
-        this.img.classList.add("disassembled");
-
-
-
-        if (this.statusText) this.statusText.textContent = "DE-DIGITIZING QUANTUM MATRIX...";
-
-        if (this.statusPct) this.statusPct.textContent = "0%";
-
-
-
-        setTimeout(() => this.startIntegration(), 380);
-
-    }
-
-
-
-    startIntegration() {
-
-        this.state = "integrating";
-
-        this.progress = 0;
-
-
-
-        this.img.classList.remove("assembled");
-
-        this.img.classList.add("disassembled");
-
-
-
-        // Trigger scan beam animation
-
-        if (this.scanBeam) {
-
-            this.scanBeam.classList.remove("scanning");
-
-            void this.scanBeam.offsetWidth; // trigger reflow
-
-            this.scanBeam.classList.add("scanning");
-
+        if (this.statusText) {
+            this.statusText.innerHTML = '<strong style="color:#00f0ff;animation:pulseGlow 0.5s infinite;">DISINTEGRATING QUANTUM VOXELS...</strong>';
         }
 
-    }
+        this.spawnDisintegrationParticles();
+        this.startParticleLoop();
 
+        // Phase 2: Switch asset and trigger reassembly scanbeam
+        setTimeout(() => {
+            this.img.src = nextSrc;
+            this.img.alt = (nextMode === "real") ? "Vishnu - Professional IT Specialist" : "Vishnu - 3D Cyber Avatar";
+            this.currentMode = nextMode;
 
+            this.img.classList.remove("disintegrating");
+            this.img.classList.add("assembling");
 
-    render() {
-
-        this.ctx.clearRect(0, 0, this.width, this.height);
-
-
-
-        if (this.state === "integrating") {
-
-            this.progress += 0.009; // smooth ~1.9s duration
-
-            const pct = Math.min(Math.round(this.progress * 100), 100);
-
-
-
-            if (this.statusPct) this.statusPct.textContent = `${pct}%`;
+            if (this.scanBeam) {
+                this.scanBeam.classList.remove("scanning");
+                void this.scanBeam.offsetWidth;
+                this.scanBeam.classList.add("scanning");
+            }
 
             if (this.statusText) {
-
-                if (pct < 28) this.statusText.textContent = "STREAMING QUANTUM VOXELS...";
-
-                else if (pct < 65) this.statusText.textContent = "SYNTHESIZING NEURAL MESH...";
-
-                else if (pct < 88) this.statusText.textContent = "LOCKING ATOMIC CO-ORDINATES...";
-
-                else this.statusText.textContent = "HOLOGRAM MATRIX RESOLVED";
-
+                this.statusText.innerHTML = `<strong style="color:#a855f7;">MATERIALIZING ${nextLabel.toUpperCase()}...</strong>`;
             }
 
-
-
-            // Reveal solid image when almost assembled
-
-            if (this.progress >= 0.86 && this.img.classList.contains("disassembled")) {
-
-                this.img.classList.remove("disassembled");
-
-                this.img.classList.add("assembled");
-
-            }
-
-
-
-            if (this.progress >= 1.0) {
-
-                this.state = "assembled";
-
-                if (this.statusPct) this.statusPct.textContent = "100%";
-
-                if (this.statusText) this.statusText.textContent = "HOLOGRAM MATRIX ONLINE";
-
-            }
-
-        }
-
-
-
-        // Render & Update Particles
-
-        const spring = 0.07;
-
-        const friction = 0.84;
-
-        const repulseRadius = 65;
-
-
-
-        for (let i = 0; i < this.particles.length; i++) {
-
-            const p = this.particles[i];
-
-
-
-            if (this.state === "integrating") {
-
-                if (this.progress >= p.triggerProgress) {
-
-                    p.active = true;
-
-                }
-
-
-
-                if (p.active) {
-
-                    // Pull toward target
-
-                    const dx = p.targetX - p.x;
-
-                    const dy = p.targetY - p.y;
-
-                    p.vx += dx * spring;
-
-                    p.vy += dy * spring;
-
-                    p.vx *= friction;
-
-                    p.vy *= friction;
-
-                    p.x += p.vx;
-
-                    p.y += p.vy;
-
-
-
-                    if (Math.abs(dx) < 1.5 && Math.abs(dy) < 1.5) {
-
-                        p.assembled = true;
-
-                    }
-
-                } else {
-
-                    // Floating in outer dispersion
-
-                    p.x += p.vx * 0.4;
-
-                    p.y += p.vy * 0.4;
-
-                    p.vx *= 0.95;
-
-                    p.vy *= 0.95;
-
-                }
-
-            } else if (this.state === "assembled") {
-
-                // Home spring
-
-                const dx = p.targetX - p.x;
-
-                const dy = p.targetY - p.y;
-
-                p.vx += dx * 0.08;
-
-                p.vy += dy * 0.08;
-
-
-
-                // Interactive mouse repulsion field
-
-                if (this.mouse.active) {
-
-                    const mdx = p.x - this.mouse.x;
-
-                    const mdy = p.y - this.mouse.y;
-
-                    const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-
-                    if (mdist < repulseRadius && mdist > 0) {
-
-                        const force = (repulseRadius - mdist) / repulseRadius;
-
-                        p.vx += (mdx / mdist) * force * 7;
-
-                        p.vy += (mdy / mdist) * force * 7;
-
-                    }
-
-                }
-
-
-
-                p.vx *= friction;
-
-                p.vy *= friction;
-
-                p.x += p.vx;
-
-                p.y += p.vy;
-
-            } else {
-
-                // Dispersed idle motion
-
-                p.x += p.vx * 0.3;
-
-                p.y += p.vy * 0.3;
-
-                p.vx *= 0.96;
-
-                p.vy *= 0.96;
-
-            }
-
-
-
-            // Draw particle
-
-            p.sparkle += 0.08;
-
-            const currentAlpha = this.state === "assembled"
-
-                ? (p.assembled ? Math.max(0.08, 0.4 + Math.sin(p.sparkle) * 0.25) : 0)
-
-                : p.alpha;
-
-
-
-            if (currentAlpha > 0.02) {
-
-                this.ctx.beginPath();
-
-                this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-
-                this.ctx.fillStyle = `${p.colorBase}${currentAlpha})`;
-
-                this.ctx.shadowBlur = this.state === "assembled" ? 4 : 8;
-
-                this.ctx.shadowColor = "#00f0ff";
-
-                this.ctx.fill();
-
-            }
-
-        }
-
-
-
-        // Draw ambient floating cyber embers
-
-        if (this.state === "assembled") {
-
-            for (let j = 0; j < this.ambientParticles.length; j++) {
-
-                const ep = this.ambientParticles[j];
-
-                ep.x += ep.vx;
-
-                ep.y += ep.vy;
-
-
-
-                if (ep.y < -10) {
-
-                    ep.y = this.height + 10;
-
-                    ep.x = Math.random() * this.width;
-
-                }
-
-                if (ep.x < -10 || ep.x > this.width + 10) {
-
-                    ep.x = Math.random() * this.width;
-
-                }
-
-
-
-                this.ctx.beginPath();
-
-                this.ctx.arc(ep.x, ep.y, ep.radius, 0, Math.PI * 2);
-
-                this.ctx.fillStyle = `${ep.colorBase}${ep.alpha})`;
-
-                this.ctx.shadowBlur = 6;
-
-                this.ctx.shadowColor = "#a855f7";
-
-                this.ctx.fill();
-
-            }
-
-        }
-
-
-
-        requestAnimationFrame(() => this.render());
-
+            this.spawnAssemblyParticles();
+        }, 460);
+
+        // Phase 3: Finalize and restore clean, sharp image with no obscuring particles
+        setTimeout(() => {
+            this.img.classList.remove("assembling");
+            this.stopParticleLoop();
+            this.ctx.clearRect(0, 0, this.width, this.height);
+            this.particles = [];
+            this.isTransitioning = false;
+            this.updateUI();
+        }, 980);
     }
 
+    spawnDisintegrationParticles() {
+        this.particles = [];
+        const count = 280;
+        const cyberColors = [
+            "rgba(0, 240, 255, ",   // Neon cyan
+            "rgba(168, 85, 247, ",  // Electric purple
+            "rgba(45, 212, 191, ",  // Turquoise
+            "rgba(251, 191, 36, ",  // Warm amber
+            "rgba(255, 255, 255, "  // White sparkle
+        ];
+
+        for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 8 + 3;
+            this.particles.push({
+                x: Math.random() * this.width,
+                y: Math.random() * this.height,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed - (Math.random() * 4 + 2),
+                radius: Math.random() * 2.5 + 1.2,
+                colorBase: cyberColors[Math.floor(Math.random() * cyberColors.length)],
+                alpha: Math.random() * 0.4 + 0.6,
+                decay: Math.random() * 0.025 + 0.02
+            });
+        }
+    }
+
+    spawnAssemblyParticles() {
+        const count = 180;
+        const cyberColors = [
+            "rgba(0, 240, 255, ",
+            "rgba(168, 85, 247, ",
+            "rgba(255, 255, 255, "
+        ];
+
+        for (let i = 0; i < count; i++) {
+            const edge = Math.random();
+            let x, y;
+            if (edge < 0.25) { x = Math.random() * this.width; y = 0; }
+            else if (edge < 0.5) { x = this.width; y = Math.random() * this.height; }
+            else if (edge < 0.75) { x = Math.random() * this.width; y = this.height; }
+            else { x = 0; y = Math.random() * this.height; }
+
+            const targetX = this.width * 0.5 + (Math.random() - 0.5) * (this.width * 0.8);
+            const targetY = this.height * 0.5 + (Math.random() - 0.5) * (this.height * 0.8);
+
+            this.particles.push({
+                x,
+                y,
+                vx: (targetX - x) * 0.08,
+                vy: (targetY - y) * 0.08,
+                radius: Math.random() * 2 + 1,
+                colorBase: cyberColors[Math.floor(Math.random() * cyberColors.length)],
+                alpha: 0.9,
+                decay: 0.035
+            });
+        }
+    }
+
+    startParticleLoop() {
+        if (this.animId) cancelAnimationFrame(this.animId);
+        const loop = () => {
+            this.ctx.clearRect(0, 0, this.width, this.height);
+
+            for (let i = this.particles.length - 1; i >= 0; i--) {
+                const p = this.particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vx *= 0.95;
+                p.vy *= 0.95;
+                p.alpha -= p.decay;
+
+                if (p.alpha <= 0.02) {
+                    this.particles.splice(i, 1);
+                    continue;
+                }
+
+                this.ctx.beginPath();
+                this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                this.ctx.fillStyle = `${p.colorBase}${p.alpha})`;
+                this.ctx.shadowBlur = 8;
+                this.ctx.shadowColor = "#00f0ff";
+                this.ctx.fill();
+            }
+
+            if (this.isTransitioning || this.particles.length > 0) {
+                this.animId = requestAnimationFrame(loop);
+            } else {
+                this.ctx.clearRect(0, 0, this.width, this.height);
+            }
+        };
+        this.animId = requestAnimationFrame(loop);
+    }
+
+    stopParticleLoop() {
+        if (this.animId) {
+            cancelAnimationFrame(this.animId);
+            this.animId = null;
+        }
+    }
 }
 
 

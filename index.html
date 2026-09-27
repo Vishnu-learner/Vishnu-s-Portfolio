@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
@@ -218,8 +218,8 @@
                             </div>
 
                             <!-- Avatar Container with Particle Integration Canvas -->
-                            <div class="avatar-image-container" id="avatar-image-container">
-                                <img src="assets/avatar.jpg" alt="Vishnu Cyber Avatar" class="hero-avatar-img disassembled" id="hero-avatar-img">
+                            <div class="avatar-image-container" id="avatar-image-container" title="Click image to disintegrate and switch avatar mode">
+                                <img src="assets/avatar.jpg" alt="Vishnu - Professional IT Specialist" class="hero-avatar-img" id="hero-avatar-img">
                                 <canvas id="avatar-particle-canvas" class="avatar-particle-canvas"></canvas>
                                 <div class="avatar-scan-beam" id="avatar-scan-beam"></div>
                                 <div class="avatar-grid-overlay"></div>
@@ -234,13 +234,13 @@
                             <!-- HUD Live Status Bar -->
                             <div class="avatar-hud-status" id="avatar-hud-status">
                                 <span class="hud-status-dot"></span>
-                                <span class="hud-status-text" id="hud-status-text">INITIALIZING QUANTUM MESH...</span>
-                                <span class="hud-status-pct" id="hud-status-pct">0%</span>
+                                <span class="hud-status-text" id="hud-status-text"><strong style="color:#00f0ff;">REAL IT PROFILE</strong> &bull; CLICK TO DISINTEGRATE</span>
+                                <span class="hud-status-pct" id="hud-status-pct" style="display:none;"></span>
                             </div>
 
                             <!-- Interactive Re-Scan Trigger Button -->
                             <button type="button" class="btn-rescan-avatar" id="btn-rescan-avatar" title="Re-assemble Holographic Avatar Particles">
-                                <i class="fas fa-sync-alt"></i> <span>Re-Scan</span>
+                                <i class="fas fa-cube" style="color:#a855f7;"></i> <span id="btn-toggle-avatar-text">Switch to 3D</span>
                             </button>
 
                             <div class="floating-cyber-chip top-left">

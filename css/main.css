@@ -2236,6 +2236,8 @@ textarea.cyber-input {
     border-radius: 18px;
     overflow: hidden;
     background: #060812;
+    cursor: pointer;
+    user-select: none;
 }
 
 .hero-avatar-img {
@@ -2244,26 +2246,65 @@ textarea.cyber-input {
     object-fit: cover;
     border-radius: 18px;
     display: block;
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease, transform 0.8s ease;
-}
-
-.hero-avatar-img.disassembled {
-    opacity: 0;
-    filter: blur(14px) brightness(1.8) contrast(1.5);
-    transform: scale(0.95);
-}
-
-.hero-avatar-img.assembled {
     opacity: 1;
-    filter: contrast(1.08) saturate(1.15);
-    transform: scale(1);
-    animation: hologramLockGlitch 0.4s ease-out;
+    filter: none;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
 }
 
-@keyframes hologramLockGlitch {
-    0% { transform: scale(0.97) skewX(-2deg); filter: brightness(2) contrast(2); }
-    40% { transform: scale(1.02) skewX(1deg); filter: brightness(1.4); }
-    100% { transform: scale(1) skewX(0); filter: contrast(1.08) saturate(1.15); }
+.avatar-image-container:hover .hero-avatar-img {
+    transform: scale(1.02);
+}
+
+/* Disintegration State */
+.hero-avatar-img.disintegrating {
+    animation: avatarDisintegrate 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    pointer-events: none;
+}
+
+@keyframes avatarDisintegrate {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+        filter: brightness(1) contrast(1);
+    }
+    30% {
+        opacity: 0.9;
+        transform: scale(1.03) skewX(-1.5deg);
+        filter: brightness(2) contrast(1.5) drop-shadow(0 0 16px #00f0ff);
+    }
+    60% {
+        opacity: 0.35;
+        transform: scale(0.97) translateY(-6px) skewX(2deg);
+        filter: brightness(2.8) contrast(1.8) blur(6px) drop-shadow(0 0 25px #a855f7);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.9) translateY(-14px);
+        filter: brightness(3.5) blur(14px);
+    }
+}
+
+/* Reassembly State */
+.hero-avatar-img.assembling {
+    animation: avatarAssemble 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes avatarAssemble {
+    0% {
+        opacity: 0;
+        transform: scale(0.92) translateY(10px);
+        filter: brightness(2.8) contrast(1.8) blur(12px) drop-shadow(0 0 25px #00f0ff);
+    }
+    50% {
+        opacity: 0.9;
+        transform: scale(1.02) translateY(-2px);
+        filter: brightness(1.4) contrast(1.2) blur(2px) drop-shadow(0 0 12px #a855f7);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: none;
+    }
 }
 
 .avatar-particle-canvas {
@@ -2292,26 +2333,18 @@ textarea.cyber-input {
 
 .avatar-scan-beam.scanning {
     opacity: 1;
-    animation: scanBeamMove 1.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: scanBeamMove 0.75s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes scanBeamMove {
     0% { top: 0%; opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
     100% { top: 100%; opacity: 0; }
 }
 
 .avatar-grid-overlay {
-    position: absolute;
-    inset: 0;
-    background: 
-        linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
-    background-size: 16px 16px;
-    pointer-events: none;
-    z-index: 2;
-    opacity: 0.65;
+    display: none;
 }
 
 /* Corner Reticle Brackets */
@@ -2323,6 +2356,7 @@ textarea.cyber-input {
     z-index: 4;
     pointer-events: none;
     filter: drop-shadow(0 0 4px #00f0ff);
+    transition: border-color 0.3s ease;
 }
 
 .cyber-bracket.top-l { top: 8px; left: 8px; border-right: none; border-bottom: none; border-top-left-radius: 6px; }
@@ -2333,21 +2367,21 @@ textarea.cyber-input {
 /* HUD Status Badge */
 .avatar-hud-status {
     position: absolute;
-    bottom: 22px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     background: rgba(6, 9, 18, 0.92);
-    border: 1px solid rgba(0, 240, 255, 0.35);
+    border: 1px solid rgba(0, 240, 255, 0.4);
     border-radius: 20px;
-    padding: 5px 14px;
+    padding: 6px 14px;
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.70rem;
     color: #00f0ff;
     display: flex;
     align-items: center;
     gap: 8px;
     z-index: 5;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 240, 255, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 15px rgba(0, 240, 255, 0.2);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     white-space: nowrap;
@@ -2366,30 +2400,32 @@ textarea.cyber-input {
 
 .btn-rescan-avatar {
     position: absolute;
-    top: 22px;
-    right: 22px;
+    top: 20px;
+    right: 20px;
     z-index: 6;
-    background: rgba(6, 9, 18, 0.88);
-    border: 1px solid rgba(0, 240, 255, 0.4);
-    color: #00f0ff;
+    background: rgba(6, 9, 18, 0.9);
+    border: 1px solid rgba(0, 240, 255, 0.5);
+    color: #ffffff;
     border-radius: 8px;
-    padding: 5px 11px;
+    padding: 6px 12px;
     font-size: 0.72rem;
     font-family: var(--font-mono);
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
     transition: all 0.25s ease;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
 .btn-rescan-avatar:hover {
-    background: rgba(0, 240, 255, 0.2);
+    background: rgba(0, 240, 255, 0.25);
     border-color: #00f0ff;
-    box-shadow: 0 0 16px rgba(0, 240, 255, 0.5);
-    transform: translateY(-1px);
+    color: #00f0ff;
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.6);
+    transform: translateY(-2px);
 }
 
 /* Enhanced 3D Parallax Tilt with Specular Glare & Dynamic Aberration */

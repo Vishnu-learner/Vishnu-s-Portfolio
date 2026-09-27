@@ -21,6 +21,7 @@ const DEFAULT_PORTFOLIO_DATA = {
         location: "Salem, Tamil Nadu, India",
 
         avatar: "assets/avatar.jpg",
+        avatar3d: "assets/avatar_3d.jpg",
 
         bio: "I’m an aspiring IT professional from Salem, Tamil Nadu, currently building my foundation in programming and system setup. I experiment with creative project ideas that merge technology with real‑world impact.",
 
