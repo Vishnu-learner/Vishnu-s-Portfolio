@@ -2228,7 +2228,7 @@ textarea.cyber-input {
     to { transform: translate(-50%, -50%) rotate(0deg); }
 }
 
-/* Avatar Image & Particle Container */
+/* Avatar Image Container */
 .avatar-image-container {
     position: relative;
     width: 100%;
@@ -2236,7 +2236,6 @@ textarea.cyber-input {
     border-radius: 18px;
     overflow: hidden;
     background: #060812;
-    cursor: pointer;
     user-select: none;
 }
 
