@@ -209,7 +209,13 @@ Comparing both side-by-side reinforces core engineering discipline: design for m
 
         }
 
-    ]
+    ],
+
+    sync: {
+        githubRepo: "Vishnu-learner/Vishnu-s-Portfolio",
+        githubBranch: "main",
+        cloudEndpoint: ""
+    }
 
 };
 
@@ -222,7 +228,12 @@ const GITHUB_TOKEN_KEY = "vishnu_portfolio_gh_token";
 class PortfolioStore {
     constructor() {
         this.cloudEndpoint = localStorage.getItem(CLOUD_URL_KEY) || "";
+        this.githubToken = localStorage.getItem(GITHUB_TOKEN_KEY) || "";
         this.data = this.loadData();
+
+        if (this.data.sync && this.data.sync.cloudEndpoint && !this.cloudEndpoint) {
+            this.cloudEndpoint = this.data.sync.cloudEndpoint;
+        }
 
         // Perform background cloud sync across all devices if configured
         if (this.cloudEndpoint) {
@@ -256,7 +267,8 @@ class PortfolioStore {
             ...parsed,
             profile: { ...DEFAULT_PORTFOLIO_DATA.profile, ...(parsed.profile || {}) },
             auth: { ...DEFAULT_PORTFOLIO_DATA.auth, ...(parsed.auth || {}) },
-            socials: { ...DEFAULT_PORTFOLIO_DATA.socials, ...(parsed.socials || {}) }
+            socials: { ...DEFAULT_PORTFOLIO_DATA.socials, ...(parsed.socials || {}) },
+            sync: { ...DEFAULT_PORTFOLIO_DATA.sync, ...(parsed.sync || {}) }
         };
     }
 
@@ -375,70 +387,141 @@ class PortfolioStore {
         }
     }
 
+    // Test connection to GitHub repository
+    async testGitHubConnection(token, repo = "Vishnu-learner/Vishnu-s-Portfolio", branch = "main") {
+        if (!token) throw new Error("Please enter a GitHub Personal Access Token.");
+        const cleanRepo = repo.trim();
+        const cleanBranch = branch.trim();
+        const apiUrl = `https://api.github.com/repos/${cleanRepo}/contents/js/data.js?ref=${cleanBranch}`;
+        const res = await fetch(apiUrl, {
+            headers: {
+                "Authorization": `Bearer ${token.trim()}`,
+                "Accept": "application/vnd.github.v3+json"
+            }
+        });
+        if (!res.ok) {
+            if (res.status === 401) throw new Error("Invalid Personal Access Token. Verify token and try again.");
+            if (res.status === 403) throw new Error("Access forbidden. Ensure token has 'repo' or 'Contents: Read and write' permissions.");
+            if (res.status === 404) throw new Error(`Repository '${cleanRepo}' or file 'js/data.js' not found on branch '${cleanBranch}'.`);
+            throw new Error(`GitHub check failed (HTTP ${res.status}: ${res.statusText})`);
+        }
+        const data = await res.json();
+        return { success: true, sha: data.sha, repo: cleanRepo, branch: cleanBranch };
+    }
+
     // Direct GitHub deployment integration
     async publishToGitHub(token, repo = "Vishnu-learner/Vishnu-s-Portfolio", branch = "main") {
         if (!token) throw new Error("GitHub Personal Access Token is required.");
+        const cleanRepo = repo.trim();
+        const cleanBranch = branch.trim();
         const filePath = "js/data.js";
-        const apiUrl = `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}`;
+        const apiUrl = `https://api.github.com/repos/${cleanRepo}/contents/${filePath}?ref=${cleanBranch}`;
 
-        // Get current file sha
+        // 1. Get current file sha and text
         const getRes = await fetch(apiUrl, {
             headers: {
-                "Authorization": `Bearer ${token}`,
+                "Authorization": `Bearer ${token.trim()}`,
                 "Accept": "application/vnd.github.v3+json"
             }
         });
 
-        if (!getRes.ok && getRes.status !== 404) {
-            throw new Error(`Failed to fetch file from GitHub: ${getRes.statusText}`);
+        if (!getRes.ok) {
+            if (getRes.status === 401) throw new Error("Invalid GitHub Token. Check your token and try again.");
+            if (getRes.status === 403) throw new Error("Permission Denied: Token lacks 'repo' or 'Contents: Read and write' scope.");
+            if (getRes.status === 404) throw new Error(`File '${filePath}' not found in ${cleanRepo} (${cleanBranch}).`);
+            throw new Error(`Failed to fetch from GitHub: ${getRes.status} ${getRes.statusText}`);
         }
 
-        const getData = getRes.ok ? await getRes.json() : null;
-        const sha = getData ? getData.sha : undefined;
+        const getData = await getRes.json();
+        const sha = getData.sha;
+        const cleanBase64 = (getData.content || "").replace(/\s/g, "");
+        let existingText = "";
+        try {
+            existingText = decodeURIComponent(escape(atob(cleanBase64)));
+        } catch (e) {
+            existingText = atob(cleanBase64);
+        }
 
-        // Generate updated data.js content
-        const newCode = this.generateDataJsContent();
-        // UTF-8 base64 encoding
+        // 2. Generate updated data.js code
+        const newCode = this.generateDataJsContent(existingText);
         const base64Content = btoa(unescape(encodeURIComponent(newCode)));
 
+        // 3. Commit updated content
         const putRes = await fetch(apiUrl, {
             method: "PUT",
             headers: {
-                "Authorization": `Bearer ${token}`,
+                "Authorization": `Bearer ${token.trim()}`,
                 "Accept": "application/vnd.github.v3+json",
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                message: `Update portfolio data from Admin CMS [${new Date().toISOString()}]`,
+                message: `Update portfolio content via Admin CMS [${new Date().toISOString().slice(0, 10)}]`,
                 content: base64Content,
                 sha: sha,
-                branch: branch
+                branch: cleanBranch
             })
         });
 
         if (!putRes.ok) {
             const errData = await putRes.json().catch(() => ({}));
-            throw new Error(errData.message || `GitHub Commit failed with status ${putRes.status}`);
+            throw new Error(errData.message || `GitHub commit failed with HTTP ${putRes.status}`);
         }
+
+        // Persist token for future 1-click publishing
+        localStorage.setItem(GITHUB_TOKEN_KEY, token.trim());
+        this.githubToken = token.trim();
 
         return await putRes.json();
     }
 
-    generateDataJsContent() {
-        return `/**
- * Data Store & State Management for Vishnu's Portfolio
- * Updated: ${new Date().toISOString()}
- */
+    generateDataJsContent(existingContent = "") {
+        const cleanData = JSON.parse(JSON.stringify(this.data));
+        const jsonStr = JSON.stringify(cleanData, null, 4);
 
-const DEFAULT_PORTFOLIO_DATA = ${JSON.stringify(this.data, null, 4)};
+        if (existingContent && existingContent.includes("const DEFAULT_PORTFOLIO_DATA")) {
+            const regex = /const DEFAULT_PORTFOLIO_DATA =[\s\S]*?;\s*(?=(const STORAGE_KEY|class PortfolioStore))/m;
+            if (regex.test(existingContent)) {
+                return existingContent.replace(regex, `const DEFAULT_PORTFOLIO_DATA = ${jsonStr};\n\n`);
+            }
+            const altRegex = /const DEFAULT_PORTFOLIO_DATA =[\s\S]*?\n\};\n/m;
+            if (altRegex.test(existingContent)) {
+                return existingContent.replace(altRegex, `const DEFAULT_PORTFOLIO_DATA = ${jsonStr};\n`);
+            }
+        }
 
-${this.getStoreCodeSource()}
-`;
+        // Fallback: If no template provided, construct complete valid data.js file
+        return `/**\n * Data Store & State Management for Vishnu's Portfolio\n * Updated: ${new Date().toISOString()}\n */\n\nconst DEFAULT_PORTFOLIO_DATA = ${jsonStr};\n\n` + this.getStoreCodeSource();
     }
 
     getStoreCodeSource() {
-        // Return store definition
-        return PortfolioStore.toString() + "\n\n// Global singleton instance\nwindow.portfolioStore = new PortfolioStore();";
+        return `const STORAGE_KEY = "vishnu_portfolio_v3";
+const CLOUD_URL_KEY = "vishnu_portfolio_cloud_url";
+const GITHUB_TOKEN_KEY = "vishnu_portfolio_gh_token";
+
+` + PortfolioStore.toString() + `\n\n// Global singleton instance\nwindow.portfolioStore = new PortfolioStore();\n`;
+    }
+
+    // Export standalone updated data.js file for local Git deployment
+    async exportDataJsFile() {
+        let template = "";
+        try {
+            const res = await fetch("js/data.js");
+            if (res.ok) {
+                template = await res.text();
+            }
+        } catch (e) {
+            console.warn("Could not read local js/data.js template:", e);
+        }
+        const fullContent = this.generateDataJsContent(template);
+        const blob = new Blob([fullContent], { type: "application/javascript" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "data.js";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 }
 

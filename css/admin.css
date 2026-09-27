@@ -754,3 +754,83 @@
     box-shadow: 0 0 25px rgba(168, 85, 247, 0.6);
     transform: translateY(-2px);
 }
+
+/* Global Sync Status Boxes and Help Guides */
+.sync-status-box {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.sync-status-box.info {
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    color: #e0f2fe;
+}
+
+.sync-status-box.success {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid var(--neon-emerald);
+    color: #d1fae5;
+}
+
+.sync-status-box.error {
+    background: rgba(244, 63, 94, 0.1);
+    border: 1px solid var(--neon-rose);
+    color: #fecdd3;
+}
+
+.token-help-card {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px dashed var(--border-glass);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 12px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.token-help-card ol {
+    margin: 8px 0 0 18px;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.token-help-card a {
+    color: var(--neon-cyan);
+    text-decoration: underline;
+}
+
+.token-help-card a:hover {
+    color: #ffffff;
+}
+
+.publish-pill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.publish-pill-badge.live {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--neon-emerald);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.publish-pill-badge.local {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
